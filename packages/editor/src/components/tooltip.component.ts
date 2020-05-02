@@ -24,16 +24,18 @@ export class TooltipComponent {
 
   public ContainerType = ContainerType;
 
-  constructor(private internalEventHandlerService: InternalEventHandlerService, private renderer: Renderer2) {}
+  constructor(private internalEventHandlerService: InternalEventHandlerService, private renderer: Renderer2) { }
 
   onMouseDown($event) {
     this.renderer.setAttribute(this.wrapper.element.nativeElement, 'draggable', 'true');
   }
 
   editField() {
-    if (this.type === ContainerType.Component)
+    if (this.type === ContainerType.Component) {
       this.internalEventHandlerService.send(InternalEventType.EditingComponent, this.object);
-    else this.internalEventHandlerService.send(InternalEventType.EditingSection, this.object);
+    } else {
+      this.internalEventHandlerService.send(InternalEventType.EditingSection, this.object);
+    }
   }
 
   remove() {

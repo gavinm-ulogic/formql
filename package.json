@@ -21,7 +21,8 @@
     "publish_editor": "ng build editor --prod && cd dist/@formql/editor && npm publish",
     "publish_material": "ng build material --prod && cd dist/@formql/material && npm publish",
     "publish_all": "npm run publish_core && npm run publish_editor && npm run publish_material",
-    "semantic-release": "semantic-release"
+    "semantic-release": "semantic-release",
+    "serve-editor": "ng serve editor-app --port 4300"
   },
   "dependencies": {
     "@angular/animations": "~9.1.1",

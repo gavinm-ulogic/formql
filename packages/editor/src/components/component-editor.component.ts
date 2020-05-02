@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
+import { Component, EventEmitter, Input, OnInit, OnChanges, Output } from '@angular/core';
 import {
   ComponentResolverService,
   FormAction,
@@ -17,7 +17,7 @@ import {
   templateUrl: './component-editor.component.html',
   styleUrls: ['./component-editor.component.scss']
 })
-export class ComponentEditorComponent implements OnInit {
+export class ComponentEditorComponent implements OnInit, OnChanges {
   static componentName = 'ComponentEditorComponent';
 
   @Input() component: FormComponent<any>;
@@ -44,8 +44,14 @@ export class ComponentEditorComponent implements OnInit {
       .filter((x, index, self) => index === self.indexOf(x))
       .sort();
   }
-
   ngOnInit() {
+    this.updatedComponent = <FormComponent<any>>{};
+    this.updatedComponent = HelperService.deepCopy(this.component, ['value']);
+    this.loadValidators(this.component.componentName);
+    this.loadActions(this.component.componentName);
+  }
+
+  ngOnChanges(changes: import("@angular/core").SimpleChanges): void {
     this.updatedComponent = <FormComponent<any>>{};
     this.updatedComponent = HelperService.deepCopy(this.component, ['value']);
     this.loadValidators(this.component.componentName);

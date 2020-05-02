@@ -15,6 +15,8 @@ import { DndNewDirective } from './directives/dnd-new.directive';
 import { GridStyleEditorComponent } from './components/grid-style-editor.component';
 import { JsonFieldInputComponent } from './components/json-field-input.component';
 
+import { BroadcastLogic } from './logic/broadcast-logic';
+
 @NgModule({
     imports: [
         CommonModule,
@@ -44,6 +46,8 @@ import { JsonFieldInputComponent } from './components/json-field-input.component
         FormEditorComponent
     ],
     exports: [
+        BroadcastLogic,
+        ComponentEditorComponent,
         FormQLEditorComponent,
         GridStyleEditorComponent,
         JsonFieldInputComponent

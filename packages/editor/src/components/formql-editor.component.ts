@@ -1,4 +1,4 @@
-import { Component, Input, OnDestroy, OnInit, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, Input, OnDestroy, OnInit, NgZone, Renderer2, ViewChild, ViewContainerRef } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import {
   ComponentResolverService,
@@ -10,6 +10,7 @@ import {
 } from '@formql/core';
 import { Subject, Subscription } from 'rxjs';
 import { takeUntil } from 'rxjs/operators';
+import { BroadcastLogic } from '../logic/broadcast-logic';
 
 @Component({
   selector: 'formql-editor',
@@ -36,15 +37,24 @@ export class FormQLEditorComponent implements OnInit, OnDestroy {
   reactiveForm: FormGroup;
 
   private componetDestroyed = new Subject();
+  private broadcastLogic: BroadcastLogic;
 
   constructor(
     private componentResolverService: ComponentResolverService,
     private vcRef: ViewContainerRef,
     private internalEventHandlerService: InternalEventHandlerService,
     private formBuilder: FormBuilder,
-    private renderer: Renderer2
+    private renderer: Renderer2,
+    private ngZone: NgZone
   ) {
     this.loadEventHandlers();
+
+    let self = this;
+    this.broadcastLogic = new BroadcastLogic('formql_editor_channel','FormQLEditorComponent','1111', function (event: MessageEvent) {
+      self.ngZone.run(() => {
+        self.handleMessages(event);
+      });    
+    });
   }
 
   ngOnInit() {
@@ -123,7 +133,9 @@ export class FormQLEditorComponent implements OnInit, OnDestroy {
 
     this.editor.insert(component.hostView);
 
-    this.openEditBar();
+    this.broadcastLogic.postMessage('show-detail', {'component': object, 'data': this.formql.data, 'mode': this.mode});
+
+    // this.openEditBar();
   }
 
   editorResponse($event) {
@@ -168,6 +180,10 @@ export class FormQLEditorComponent implements OnInit, OnDestroy {
           break;
       }
     });
+  }
+
+  private handleMessages(event: MessageEvent) {
+    let self = this;
   }
 
   ngOnDestroy(): void {

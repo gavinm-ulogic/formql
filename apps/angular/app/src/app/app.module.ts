@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module';
+import { AppFormQLEditorDetailComponent } from './app-formql-editor-detail.component'
 import { FormQLModule } from '@formql/core';
 import { FormQLEditorModule } from '@formql/editor';
 import { FormQLMaterialModule } from '@formql/material';
@@ -21,6 +22,7 @@ import { ComponentResolverService } from '@formql/core';
 @NgModule({
     declarations: [
         AppComponent,
+        AppFormQLEditorDetailComponent,
         AppFormQLComponent,
         AppFormQLEditorComponent
     ],
