@@ -35,16 +35,16 @@ export class BroadcastLogic {
         let message: BroadcastMessage = event.data;
         if (message.sourceId === this.id) return;
         switch (message.operation) {
-            case 'ping-return':
+            case 'ping-reply':
                 if (!this.subscribers.find(x => x.sourceId === message.sourceId)) {
                     this.subscribers.push(new BroadcastSubscriber(message.sourceId, message.sourceName, message.key));
                 }
                 break;
             case 'ping':
-                this.broadcastChannel.postMessage(new BroadcastMessage('ping-return', this.id, this.name, this.key, null));
+                this.broadcastChannel.postMessage(new BroadcastMessage('ping-reply', this.id, this.name, this.key, null));
                 break;
             default:
-                this.callback(event);
+                if (event.data) this.callback(event);
                 break;
         }
     }

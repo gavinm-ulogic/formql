@@ -99,41 +99,61 @@ export class FormQLEditorComponent implements OnInit, OnDestroy {
     window.open(window.location.origin + relativePath);
   }
 
+  private currentEditorName: string;
+  private currentEditorType: InternalEventType;
+  private currentEditorObject: string;
+
   loadEditor(name: string, object: any, type: InternalEventType) {
-    this.editor.clear();
+    
+    this.currentEditorName = name;
+    this.currentEditorType = type;
+    this.currentEditorObject = object;
+
+    // this.editor.clear();
 
     const componentRef = this.vcRef.createComponent(this.componentResolverService.resolveComponent(name));
     const component = <any>componentRef;
+
+    let thingToEdit: string;
 
     switch (type) {
       case InternalEventType.EditingComponent:
         component.instance.component = object;
         component.instance.data = this.formql.data;
+        thingToEdit = object.componentId;
         break;
 
       case InternalEventType.EditingSection:
         component.instance.section = object;
+        thingToEdit = object.sectionId;
         break;
 
       case InternalEventType.EditingPage:
         component.instance.page = this.formql.form.pages[0];
+        thingToEdit = object.pageId;
         break;
 
       case InternalEventType.EditingForm:
         component.instance.form = this.formql.form;
+        thingToEdit = object.formId;
         break;
     }
 
-    component.instance.data = this.formql.data;
-    component.instance.mode = this.mode;
+    // component.instance.data = this.formql.data;
+    // component.instance.mode = this.mode;
 
-    this.subscription$ = component.instance.action.pipe(takeUntil(this.componetDestroyed)).subscribe((action) => {
-      this.editorResponse(action);
-    });
+    // this.subscription$ = component.instance.action.pipe(takeUntil(this.componetDestroyed)).subscribe((action) => {
+    //   this.editorResponse(action);
+    // });
 
-    this.editor.insert(component.hostView);
+    // this.editor.insert(component.hostView);
 
-    this.broadcastLogic.postMessage('show-detail', {'component': object, 'data': this.formql.data, 'mode': this.mode});
+    window.open(`#/detail/${type}/${thingToEdit}`, 'Details', 'target=_blank');
+
+    // let self = this;
+    // setTimeout(function() {
+    //   self.broadcastLogic.postMessage('get-reply', {'component': object, 'data': self.formql.data, 'mode': self.mode});
+    // }, 5000);
 
     // this.openEditBar();
   }
@@ -184,7 +204,13 @@ export class FormQLEditorComponent implements OnInit, OnDestroy {
 
   private handleMessages(event: MessageEvent) {
     let self = this;
-  }
+    
+    switch (event.data.operation) {
+        case 'get':
+          self.broadcastLogic.postMessage('get-reply', {'component': this.currentEditorObject, 'data': self.formql.data, 'mode': self.mode});
+          break;
+    }
+}
 
   ngOnDestroy(): void {
     this.componetDestroyed.next();

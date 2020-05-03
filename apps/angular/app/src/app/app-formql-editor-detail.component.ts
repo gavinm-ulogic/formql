@@ -9,7 +9,9 @@ import { BroadcastLogic } from 'packages/editor/src/logic/broadcast-logic';
 })
 export class AppFormQLEditorDetailComponent implements OnInit {
 
-    public testText = '';
+    public type: string;
+    public id: string;
+
     public component = null;
     public data = null;
     public mode = 1;
@@ -17,23 +19,40 @@ export class AppFormQLEditorDetailComponent implements OnInit {
     private broadcastLogic: BroadcastLogic;
 
     constructor(private ngZone: NgZone, private route: ActivatedRoute) {
+        
         let self = this;
-        this.broadcastLogic = new BroadcastLogic('formql_editor_channel','AppFormQLEditorDetailComponent','1111', function (event: MessageEvent) {
+        this.broadcastLogic = new BroadcastLogic('formql_editor_channel','AppFormQLEditorDetailComponent','', function (event: MessageEvent) {
             self.ngZone.run(() => {
                 self.handleMessages(event);
             });    
-        });        
-    }    
+        });
+
+        this.route.url.subscribe(() =>{
+            this.handleRouteChange();
+        });
+        this.handleRouteChange();        
+    }
+    
+    private handleRouteChange() {
+        let routeSnap = this.route.snapshot;
+        this.type = routeSnap.params["type"];
+        this.id = routeSnap.params["id"];
+        this.broadcastLogic.postMessage('get', {'type': this.type, 'id': this.id});
+    }
 
     ngOnInit(): void {
     }
 
     private handleMessages(event: MessageEvent) {
         let self = this;
-        if (event.data && event.data.operation === 'show-detail') {
-            self.component = event.data.message.component;
-            self.data = event.data.message.data;
-            self.mode = event.data.message.mode;
+        
+        switch (event.data.operation) {
+            case 'get-reply':
+            case 'refresh':
+                self.component = event.data.message.component;
+                self.data = event.data.message.data;
+                self.mode = event.data.message.mode;
+                break;
         }
     }
 
