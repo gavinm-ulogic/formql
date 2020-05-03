@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Input, OnInit, OnChanges, Output } from '@angular/core';
+import { UUID } from 'angular2-uuid';
 import {
   ComponentResolverService,
   FormAction,
@@ -24,6 +25,7 @@ export class ComponentEditorComponent implements OnInit, OnChanges {
   @Input() data: any;
   @Input() mode: FormQLMode;
   @Output() action = new EventEmitter<any>();
+  @Output() onPinned = new EventEmitter<any>();
 
   updatedComponent: FormComponent<any>;
   disableSaveButton = false;
@@ -31,6 +33,7 @@ export class ComponentEditorComponent implements OnInit, OnChanges {
   validators: Array<FormValidator>;
   rules: Array<FormRule>;
   actionList: Array<FormAction>;
+  pinned = false;
 
   FormActionType = FormActionType;
 
@@ -145,5 +148,17 @@ export class ComponentEditorComponent implements OnInit, OnChanges {
       if (this.actionList && this.component.action)
         this.updatedComponent.action = HelperService.deepCopy(this.component.action);
       else if (!this.actionList) this.updatedComponent.action = null;
+  }
+
+  handlePin() {
+    if (!this.pinned) {
+      this.pinned = true;
+      window.name = window.name + UUID.UUID();
+      this.onPinned.emit(true);
+    }
+  }
+
+  debug() {
+    debugger;
   }
 }

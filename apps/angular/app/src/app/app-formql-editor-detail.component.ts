@@ -5,7 +5,7 @@ import { BroadcastLogic } from 'packages/editor/src/logic/broadcast-logic';
 @Component({
     selector: 'app-formql-editor-detail',
     styles: [`.mainDiv { position: absolute; top: 0; left: 0; right: 0;bottom: 0;}`],
-    template: `<formql-component-editor *ngIf="component" [component]="component" [data]="data" [mode]="mode"></formql-component-editor>`,
+    template: `<formql-component-editor *ngIf="component" [component]="component" [data]="data" [mode]="mode" (onPinned)="pinned=true"></formql-component-editor>`,
 })
 export class AppFormQLEditorDetailComponent implements OnInit {
 
@@ -15,6 +15,8 @@ export class AppFormQLEditorDetailComponent implements OnInit {
     public component = null;
     public data = null;
     public mode = 1;
+
+    public pinned = false;
 
     private broadcastLogic: BroadcastLogic;
 
@@ -49,9 +51,11 @@ export class AppFormQLEditorDetailComponent implements OnInit {
         switch (event.data.operation) {
             case 'get-reply':
             case 'refresh':
-                self.component = event.data.message.component;
-                self.data = event.data.message.data;
-                self.mode = event.data.message.mode;
+                if (!this.pinned || event.data.key === this.id) {
+                    self.component = event.data.message.component;
+                    self.data = event.data.message.data;
+                    self.mode = event.data.message.mode;    
+                }
                 break;
         }
     }

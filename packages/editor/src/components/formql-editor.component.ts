@@ -102,6 +102,7 @@ export class FormQLEditorComponent implements OnInit, OnDestroy {
   private currentEditorName: string;
   private currentEditorType: InternalEventType;
   private currentEditorObject: string;
+  private currentEditorId: string;
 
   loadEditor(name: string, object: any, type: InternalEventType) {
     
@@ -120,22 +121,22 @@ export class FormQLEditorComponent implements OnInit, OnDestroy {
       case InternalEventType.EditingComponent:
         component.instance.component = object;
         component.instance.data = this.formql.data;
-        thingToEdit = object.componentId;
+        this.currentEditorId = object.componentId;
         break;
 
       case InternalEventType.EditingSection:
         component.instance.section = object;
-        thingToEdit = object.sectionId;
+        this.currentEditorId = object.sectionId;
         break;
 
       case InternalEventType.EditingPage:
         component.instance.page = this.formql.form.pages[0];
-        thingToEdit = object.pageId;
+        this.currentEditorId = object.pageId;
         break;
 
       case InternalEventType.EditingForm:
         component.instance.form = this.formql.form;
-        thingToEdit = object.formId;
+        this.currentEditorId = object.formId;
         break;
     }
 
@@ -148,7 +149,7 @@ export class FormQLEditorComponent implements OnInit, OnDestroy {
 
     // this.editor.insert(component.hostView);
 
-    window.open(`#/detail/${type}/${thingToEdit}`, 'Details', 'target=_blank');
+    window.open(`#/detail/${type}/${this.currentEditorId}`, 'Details', 'target=_blank');
 
     // let self = this;
     // setTimeout(function() {
@@ -207,7 +208,7 @@ export class FormQLEditorComponent implements OnInit, OnDestroy {
     
     switch (event.data.operation) {
         case 'get':
-          self.broadcastLogic.postMessage('get-reply', {'component': this.currentEditorObject, 'data': self.formql.data, 'mode': self.mode});
+          self.broadcastLogic.postMessage('get-reply', this.currentEditorId, {'component': this.currentEditorObject, 'data': self.formql.data, 'mode': self.mode});
           break;
     }
 }

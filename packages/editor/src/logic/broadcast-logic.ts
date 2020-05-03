@@ -53,7 +53,7 @@ export class BroadcastLogic {
         this.broadcastChannel.postMessage(new BroadcastMessage('ping', this.id, this.name, this.key, null));
     }
 
-    public postMessage(operation: string, message: any) {
-        this.broadcastChannel.postMessage(new BroadcastMessage(operation, this.id, this.name, this.key, message));
+    public postMessage(operation: string, key: string, message: any) {
+        this.broadcastChannel.postMessage(new BroadcastMessage(operation, this.id, this.name, key, message));
     }
 }
